@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import assets, { messagesDummyData } from "../assets/assets"
 import dayjs from "dayjs";
 
-const ChatContainer = ({setSelectedUser}: any) => {
+const ChatContainer = ({setSelectedUser, selectedUser }: any) => {
 
   const scrollEnd = useRef<HTMLDivElement | null>(null);
 
@@ -13,7 +13,7 @@ const ChatContainer = ({setSelectedUser}: any) => {
   }, [])
   
 
-  return (
+  return selectedUser ? (
     <div className="h-full overflow-scroll relative backdrop-blur-lg">
       {/* ......header....... */}
       <div style={{padding: "0.75rem 0rem 0.75rem 0rem", margin: "0 1rem 0 1rem"}} className="flex items-center gap-3 border-b border-stone-500">
@@ -81,6 +81,18 @@ const ChatContainer = ({setSelectedUser}: any) => {
       />
     </div>
 
+    </div>
+  ) : (
+    <div className="flex flex-col items-center justify-center gap-4 text-center h-full text-gray-300">
+      <img
+        src={assets.logo_icon}
+        alt=""
+        className="w-16"
+      />
+
+      <p className="text-xl font-medium">
+        Chat anytime, anywhere
+      </p>
     </div>
   )
 }
