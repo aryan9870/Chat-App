@@ -44,3 +44,39 @@ export const registerUser = async (req, res) => {
     },
   });
 };
+
+export const loginUser = async (req, res) => {
+  
+  const { email, password } = req.body;
+
+  const user = await User.findOne({ email });
+
+  if (!user || !(await user.comparePassword(password))) {
+    return res.status(400).json({
+      success: false,
+      message: "Invalid credentials",
+    });
+  }
+
+  // Generate JWT
+  const token = generateToken(user._id);
+
+  // Store token in cookie
+  res.cookie("token", token, {
+    httpOnly: true,
+    secure: false,
+    sameSite: "strict",
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+  });
+
+  res.status(200).json({
+    success: true,
+    message: "User login successfully",
+    user: {
+      _id: user._id,
+      username: user.username,
+      email: user.email,
+      avatar: user.avatar,
+    },
+  });
+};
