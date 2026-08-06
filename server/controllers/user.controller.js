@@ -80,3 +80,25 @@ export const loginUser = async (req, res) => {
     },
   });
 };
+
+// Logout
+export const logoutUser = async (req, res) => {
+  
+  res.clearCookie("token");
+
+  res.status(200).json({
+    success: true,
+    message: "Logged out",
+  });
+};
+
+// Get Profile
+export const getProfile = async (req, res) => {
+  
+  const user = await User.findById(req.user.id).select("-password");
+
+  res.status(200).json({
+    success: true,
+    user,
+  });
+};
