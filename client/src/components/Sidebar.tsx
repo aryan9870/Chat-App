@@ -1,7 +1,12 @@
 import { useNavigate } from 'react-router'
 import assets, { userDummyData } from '../assets/assets'
+import { AuthContext } from '../context/AuthContext';
+import { useContext } from 'react';
+
 
 const Sidebar = ({ selectedUser, setSelectedUser }: any) => {
+
+  const { logout } = useContext(AuthContext);
 
   const navigate = useNavigate();
 
@@ -15,7 +20,7 @@ const Sidebar = ({ selectedUser, setSelectedUser }: any) => {
                   <div style={{padding: "1.25rem"}} className='absolute top-full right-0 z-20 w-32 rounded-md bg-[#282142] border border-gray-600 text-gray-100 hidden group-hover:block'>
                     <button onClick={() => navigate("/profile")}  className='cursor-pointer text-sm'>Edit Profile</button>
                     <hr style={{margin: "0.5rem 0rem"}} className='border-t border-gray-500'/>
-                    <button className='cursor-pointer text-sm'>Logout</button>
+                    <button onClick={logout} className='cursor-pointer text-sm'>Logout</button>
                   </div>
                 </div>
             </div>

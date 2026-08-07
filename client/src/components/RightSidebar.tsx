@@ -1,6 +1,11 @@
+import { useContext } from "react";
 import assets, { imagesDummyData } from "../assets/assets";
+import { AuthContext } from "../context/AuthContext";
 
 const RightSidebar = ({ selectedUser }: any) => {
+
+  const { logout } = useContext(AuthContext);
+
   return (
     selectedUser && (
       <div
@@ -47,7 +52,13 @@ const RightSidebar = ({ selectedUser }: any) => {
             </div>
         </div>
 
-        <button style={{padding: "0.5rem 5rem 0.5rem 5rem"}} className="absolute bottom-5 left-1/2 transform -translate-x-1/2 bg-linear-to-r from-purple-400 to-violet-600 text-white border-none text-sm font-light py-2 px-20 rounded-full cursor-pointer">Logout</button>
+        <button 
+          style={{padding: "0.5rem 5rem 0.5rem 5rem"}} 
+          className="absolute bottom-5 left-1/2 transform -translate-x-1/2 bg-linear-to-r from-purple-400 to-violet-600 text-white border-none text-sm font-light py-2 px-20 rounded-full cursor-pointer"
+          onClick={logout}
+        >
+          Logout
+        </button>
 
       </div>
     )

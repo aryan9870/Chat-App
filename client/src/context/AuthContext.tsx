@@ -1,10 +1,15 @@
 import { createContext, useState } from "react";
 import api from "../api/axios";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router";
 
 
 export const AuthContext = createContext<any>(null);
 
 export const AuthProvider = ({ children }: any) => {
+
+  const navigate = useNavigate();
+
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -19,12 +24,25 @@ export const AuthProvider = ({ children }: any) => {
     }
   }
 
+  const logout = async () => {
+    try {
+      await api.post("/users/logout");
+      setUser(null);
+      toast.success("Logged out successfully!");
+      navigate("/login");
+    } catch (error) {
+      console.error("Logout failed:", error);
+      toast.error("Failed to log out.");
+    }
+  };
+
   const value = {
     user,
     setUser,
     loading,
     setLoading,
-    getProfile
+    getProfile,
+    logout,
   };
 
   return (
