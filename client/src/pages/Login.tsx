@@ -1,19 +1,57 @@
 import assets from "../assets/assets"
-import { useState } from "react"
+import { useContext, useState } from "react"
+import { AuthContext } from "../context/AuthContext";
+import api from "../api/axios";
+import { useNavigate } from "react-router";
+import toast from "react-hot-toast";
 
 const Login = () => {
 
+  const { setUser } = useContext(AuthContext);
+
   const [state, setState] = useState("Sign up");
 
-  const [fullName, setFullName] = useState("");
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSubmit = (e: any) => {
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e: any) => {
       e.preventDefault();
-      console.log(fullName);
-      console.log(email);
-      console.log(password);
+      if(state === "Sign up") {
+        // Handle sign up logic here
+        console.log("Sign up with:", username, email, password);
+        try {
+          const response = await api.post("/users/register", {
+            username,
+            email,
+            password,
+          });
+          console.log("Sign up successful:", response.data);
+          toast.success("Account created successfully!");
+          setUser(response.data.user);
+          navigate("/");
+        } catch (error: any) {
+          toast.error(error.response?.data?.message || "Error signing up.");
+        }
+      } else {
+        // Handle login logic here
+        console.log("Login with:", email, password);
+        try {
+          const response = await api.post("/users/login", {
+            email,
+            password
+          });
+          console.log("Login successful:", response.data);
+          toast.success("Logged in successfully!");
+          setUser(response.data.user);
+          navigate("/");
+        } catch (error: any) {
+          console.error("Error during login:", error);
+          toast.error(error.response?.data?.message || "Error logging in.");
+        }
+      }
   } 
 
 
@@ -28,7 +66,7 @@ const Login = () => {
           {state}
           <img src={assets.arrow_icon} alt="" className="w-5 cursor-pointer"/>
         </h2>
-        {state == "Sign up" && <input value={fullName} onChange={(e) => setFullName(e.target.value)} style={{padding: "0.5rem"}} type="text" className=" border-gray-500 rounded-md border focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Full Name" required />}
+        {state == "Sign up" && <input value={username} onChange={(e) => setUsername(e.target.value)} style={{padding: "0.5rem"}} type="text" className=" border-gray-500 rounded-md border focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Username" required />}
         <input value={email} onChange={(e) => setEmail(e.target.value)} style={{padding: "0.5rem"}} type="email" placeholder="Email Address" required className=" border border-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"/>
         <input value={password} onChange={(e) => setPassword(e.target.value)} style={{padding: "0.5rem"}} type="password" placeholder="Password" required className=" border border-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"/>
 
