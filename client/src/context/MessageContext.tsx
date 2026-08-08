@@ -1,14 +1,18 @@
-import { createContext, useState } from "react";
+import { createContext, useState, useEffect } from "react";
 import api from "../api/axios";
+import { useSocket } from "./SocketContext";
 
 
 export const MessageContext = createContext<any>(null);
 
 export const MessageProvider = ({ children }: any) => {
 
+  const socket = useSocket();
+
   const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState<any[]>([]);
+  const [onlineUsers, setOnlineUsers] = useState<string[]>([]);
 
 
   const getUsers = async () => {
@@ -38,6 +42,34 @@ export const MessageProvider = ({ children }: any) => {
     }
   };
 
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleOnlineUsers = (users: string[]) => {
+        setOnlineUsers(users);
+    };
+
+    socket.on("getOnlineUsers", handleOnlineUsers);
+
+    return () => {
+        socket.off("getOnlineUsers", handleOnlineUsers);
+    };
+  }, [socket]);
+
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleNewMessage = (message: any) => {
+        setMessages((prev: any[]) => [...prev, message]);
+    };
+
+    socket.on("newMessage", handleNewMessage);
+
+    return () => {
+        socket.off("newMessage", handleNewMessage);
+    };
+  }, [socket]);
+
   const value = {
     users,
     selectedUser,
@@ -45,7 +77,8 @@ export const MessageProvider = ({ children }: any) => {
     messages,
     getUsers,
     getMessages,
-    sendMessage
+    sendMessage,
+    onlineUsers
   };
 
   return (

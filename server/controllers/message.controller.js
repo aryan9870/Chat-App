@@ -1,5 +1,6 @@
 import User from "../models/user.model.js";
 import Message from "../models/message.model.js";
+import { io, userSocketMap } from "../server.js";
 
 // Get all users for sidebar
 export const getUsersForSidebar = async (req, res) => {
@@ -53,6 +54,20 @@ export const sendMessage = async (req, res) => {
       receiver: receiverId,
       content: content,
     });
+
+    const receiverSocketId = userSocketMap[receiverId];
+    const senderSocketId = userSocketMap[senderId];
+
+    if (receiverSocketId || senderSocketId) {
+      if (receiverSocketId) {
+          io.to(receiverSocketId).emit("newMessage", newMessage);
+      }
+
+      if (senderSocketId) {
+          io.to(senderSocketId).emit("newMessage", newMessage);
+      }
+    }
+
 
     res.status(201).json({
       success: true,
