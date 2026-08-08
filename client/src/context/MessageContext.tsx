@@ -29,9 +29,9 @@ export const MessageProvider = ({ children }: any) => {
     }
   };
 
-  const sendMessage = async (id: string, text: string) => {
+  const sendMessage = async (id: string, content: string) => {
     try {
-      const response = await api.post(`/messages/send/${id}`, { text });
+      const response = await api.post(`/messages/send/${id}`, { content });
       console.log(response.data);
     } catch (error) {
       console.error("Error sending message:", error);

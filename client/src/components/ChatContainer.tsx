@@ -1,8 +1,23 @@
-import { useEffect, useRef } from "react";
-import assets, { messagesDummyData } from "../assets/assets"
+import { useContext, useEffect, useRef, useState } from "react";
+import assets from "../assets/assets"
 import dayjs from "dayjs";
+import { MessageContext } from "../context/MessageContext";
+import { AuthContext } from "../context/AuthContext";
+
 
 const ChatContainer = ({setSelectedUser, selectedUser }: any) => {
+
+  const { user } = useContext(AuthContext);
+  const { sendMessage, messages } = useContext(MessageContext);
+  console.log(messages);
+
+  const [content, setContent] = useState("");
+
+  const handleSendMessage = (e: any) => {
+    e.preventDefault();
+    sendMessage(selectedUser._id, content);
+    setContent("");
+  }
 
   const scrollEnd = useRef<HTMLDivElement | null>(null);
 
@@ -25,20 +40,20 @@ const ChatContainer = ({setSelectedUser, selectedUser }: any) => {
 
     {/* ------- chat area ------- */}
     <div style={{padding: "0.75rem", paddingBottom: "1.5rem"}}  className="flex flex-col h-[calc(100%-120px)] overflow-y-scroll">
-      {messagesDummyData.map((msg, index) => (
+      {messages.map((msg: any, index: number) => (
         <div key={index} className={`flex items-end gap-2 justify-end ${
-            msg.senderId !== "680f50e4f10f3cd28382ecf9" && "flex-row-reverse"}`}>
+            msg.sender !== user._id && "flex-row-reverse"}`}>
           {msg.image ? (
             <img style={{marginBottom: "2rem"}} src={msg.image} alt="" className="max-w-50 border border-gray-700 rounded-lg overflow-hidden"/>
           ) : (
             <p style={{marginBottom: "2rem", padding: "0.5rem"}} className={` max-w-60 md:text-sm font-light rounded-lg break-all text-white bg-blue-400 ${
-                msg.senderId === "680f50e4f10f3cd28382ecf9" ? "rounded-br-none" : "rounded-bl-none"}`}>
-              {msg.text}
+                msg.sender === user._id ? "rounded-br-none" : "rounded-bl-none"}`}>
+              {msg.content}
             </p>
           )}
 
           <div className="flex flex-col items-center gap-2">
-            <img src={msg.senderId === '680f50e4f10f3cd28382ecf9' ? assets.avatar_icon : selectedUser.avatar} alt="" className="w-7 rounded-full"/>
+            <img src={msg.sender === selectedUser._id ? selectedUser.avatar : user.avatar} alt="" className="w-7 rounded-full"/>
             <p className="text-gray-500 text-xs">{dayjs(msg.createdAt).format("hh:mm A")}</p>
           </div>
         </div>
@@ -47,7 +62,7 @@ const ChatContainer = ({setSelectedUser, selectedUser }: any) => {
     </div>
 
     {/* -------- Bottom Area -------- */}
-    <div style={{padding: "0.75rem"}} className="absolute bottom-0 left-0 right-0 flex items-center gap-3">
+    <form onSubmit={handleSendMessage} style={{padding: "0.75rem"}} className="absolute bottom-0 left-0 right-0 flex items-center gap-3">
 
       <div style={{padding: "0 0.75rem 0 0.75rem"}} className="flex-1 flex items-center bg-[#2b2b2b] rounded-lg">
 
@@ -56,6 +71,8 @@ const ChatContainer = ({setSelectedUser, selectedUser }: any) => {
           placeholder="Send a message"
           style={{padding: "0.75rem"}}
           className="flex-1 bg-transparent text-sm border-none outline-none text-white placeholder-gray-400"
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
         />
 
         <input
@@ -73,13 +90,14 @@ const ChatContainer = ({setSelectedUser, selectedUser }: any) => {
           />
         </label>
       </div>
-
-      <img
-        src={assets.send_button}
-        alt=""
-        className="w-7 cursor-pointer"
-      />
-    </div>
+      <button type="submit" className="cursor-pointer">
+        <img
+          src={assets.send_button}
+          alt=""
+          className="w-7"
+        />
+      </button>
+    </form>
 
     </div>
   ) : (

@@ -9,9 +9,13 @@ import { MessageContext } from '../context/MessageContext';
 const Sidebar = ({ selectedUser, setSelectedUser }: any) => {
 
   const { logout } = useContext(AuthContext);
-  const { users, getUsers } = useContext(MessageContext);
-  console.log(users);
+  const { users, getUsers, getMessages } = useContext(MessageContext);
   const navigate = useNavigate();
+
+  const handleSelectUser = async (user: any) => {
+    await getMessages(user._id);
+    setSelectedUser(user);
+  }
 
   useEffect(() => {
     getUsers();
@@ -42,7 +46,7 @@ const Sidebar = ({ selectedUser, setSelectedUser }: any) => {
         {/* Contacts */}
         <div className='flex flex-col'>
           {users.map((user: any, index: number) => {
-            return <div onClick={() => setSelectedUser(user)} key={index} style={{padding: "0.5rem", paddingLeft: "1rem"}}  className={`relative flex items-center gap-2 rounded cursor-pointer max-sm:text-sm ${selectedUser?._id === user._id && "bg-[#282142]/50 "}`}>
+            return <div onClick={() => handleSelectUser(user)} key={index} style={{padding: "0.5rem", paddingLeft: "1rem"}}  className={`relative flex items-center gap-2 rounded cursor-pointer max-sm:text-sm ${selectedUser?._id === user._id && "bg-[#282142]/50 "}`}>
               <img src={user.avatar} alt="" className='w-8.75 aspect[1/1] rounded-full'/>
               <div className='flex flex-col leading-5'>
                 <p>{user.username}</p>
