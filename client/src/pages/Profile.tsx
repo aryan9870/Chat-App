@@ -1,13 +1,16 @@
 import { useNavigate } from "react-router";
 import assets from "../assets/assets"
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { AuthContext } from "../context/AuthContext";
 
 const Profile = () => {
 
+  const { user } = useContext(AuthContext);
+
   const [selectedImg, setSelectedImg] = useState<File | null>(null);
   const navigate = useNavigate();
-  const [name, setName] = useState("Martin Johnson");
-  const [bio, setBio] = useState("Hi Everyone, I am using QuickChat");
+  const [name, setName] = useState(user.username);
+  const [bio, setBio] = useState(user.bio);
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
@@ -31,7 +34,7 @@ const Profile = () => {
               accept='.png, .jpg, .jpeg'
               hidden
             />
-            <img src={selectedImg ? URL.createObjectURL(selectedImg) : assets.avatar_icon} alt="" className={`w-12 h-12 ${selectedImg && "rounded-full"}`}/>
+            <img src={selectedImg ? URL.createObjectURL(selectedImg) : user.avatar} alt="" className={`w-12 h-12 rounded-full`}/>
             upload profile image
           </label>
           <input

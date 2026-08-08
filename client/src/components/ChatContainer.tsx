@@ -17,8 +17,8 @@ const ChatContainer = ({setSelectedUser, selectedUser }: any) => {
     <div className="h-full overflow-scroll relative backdrop-blur-lg">
       {/* ......header....... */}
       <div style={{padding: "0.75rem 0rem 0.75rem 0rem", margin: "0 1rem 0 1rem"}} className="flex items-center gap-3 border-b border-stone-500">
-        <img src={assets.profile_martin} alt="" className="w-8 rounded-full"/>
-        <p className="flex-1 text-lg text-white flex items-center gap-2">Martin Johnson <span className="w-2 h-2 rounded-full bg-green-500"></span></p>
+        <img src={selectedUser.avatar} alt="" className="w-8 rounded-full"/>
+        <p className="flex-1 text-lg text-white flex items-center gap-2">{selectedUser.username} <span className="w-2 h-2 rounded-full bg-green-500"></span></p>
         <img onClick={() => setSelectedUser(null)} src={assets.arrow_icon} alt="" className="md:hidden max-w-7"/>
         <img src={assets.help_icon} alt="" className="max-md:hidden max-w-5"/>
       </div>
@@ -38,7 +38,7 @@ const ChatContainer = ({setSelectedUser, selectedUser }: any) => {
           )}
 
           <div className="flex flex-col items-center gap-2">
-            <img src={msg.senderId === '680f50e4f10f3cd28382ecf9' ? assets.avatar_icon : assets.profile_martin} alt="" className="w-7 rounded-full"/>
+            <img src={msg.senderId === '680f50e4f10f3cd28382ecf9' ? assets.avatar_icon : selectedUser.avatar} alt="" className="w-7 rounded-full"/>
             <p className="text-gray-500 text-xs">{dayjs(msg.createdAt).format("hh:mm A")}</p>
           </div>
         </div>

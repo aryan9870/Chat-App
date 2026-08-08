@@ -1,14 +1,21 @@
 import { useNavigate } from 'react-router'
-import assets, { userDummyData } from '../assets/assets'
+import assets from '../assets/assets'
 import { AuthContext } from '../context/AuthContext';
 import { useContext } from 'react';
+import { useEffect } from 'react';
+import { MessageContext } from '../context/MessageContext';
 
 
 const Sidebar = ({ selectedUser, setSelectedUser }: any) => {
 
   const { logout } = useContext(AuthContext);
-
+  const { users, getUsers } = useContext(MessageContext);
+  console.log(users);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    getUsers();
+  }, []);
 
   return (
     <div className={`bg-[#8185B2]/10 h-full rounded-r-xl overflow-y-scroll text-white ${selectedUser ? "max-md:hidden" : ""}`}>
@@ -34,11 +41,11 @@ const Sidebar = ({ selectedUser, setSelectedUser }: any) => {
 
         {/* Contacts */}
         <div className='flex flex-col'>
-          {userDummyData.map((user, index) => {
+          {users.map((user: any, index: number) => {
             return <div onClick={() => setSelectedUser(user)} key={index} style={{padding: "0.5rem", paddingLeft: "1rem"}}  className={`relative flex items-center gap-2 rounded cursor-pointer max-sm:text-sm ${selectedUser?._id === user._id && "bg-[#282142]/50 "}`}>
-              <img src={user.profilePic} alt="" className='w-8.75 aspect[1/1] rounded-full'/>
+              <img src={user.avatar} alt="" className='w-8.75 aspect[1/1] rounded-full'/>
               <div className='flex flex-col leading-5'>
-                <p>{user.fullName}</p>
+                <p>{user.username}</p>
                 {
                   index < 2 ? <span className='text-green-400 text-xs'>Online</span> : <span className='text-neutral-400 text-xs'>Offline</span>
                 }
