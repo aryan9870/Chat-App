@@ -28,6 +28,7 @@ export const MessageProvider = ({ children }: any) => {
     try {
       const response = await api.get(`/messages/${id}`);
       setMessages(response.data.messages);
+      getUsers();
     } catch (error) {
       console.error("Error fetching messages:", error);
     }
@@ -60,6 +61,9 @@ export const MessageProvider = ({ children }: any) => {
     if (!socket || !selectedUser) return;
 
     const handleNewMessage = (message: any) => {
+
+      getUsers()
+
       if (String(message.sender) === String(selectedUser._id) || String(message.receiver) === String(selectedUser._id)) {
       setMessages((prev: any[]) => [...prev, message]);
       }

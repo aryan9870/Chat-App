@@ -9,8 +9,10 @@ import { MessageContext } from '../context/MessageContext';
 const Sidebar = ({ selectedUser, setSelectedUser }: any) => {
 
   const { logout } = useContext(AuthContext);
-  const { users, getUsers, getMessages } = useContext(MessageContext);
+  const { users, getUsers, getMessages, onlineUsers } = useContext(MessageContext);
   const navigate = useNavigate();
+
+  console.log("ONLINE USERS: ", onlineUsers);
 
   const handleSelectUser = async (user: any) => {
     await getMessages(user._id);
@@ -48,16 +50,26 @@ const Sidebar = ({ selectedUser, setSelectedUser }: any) => {
           {users.map((user: any, index: number) => {
             return <div onClick={() => handleSelectUser(user)} key={index} style={{padding: "0.5rem", paddingLeft: "1rem"}}  className={`relative flex items-center gap-2 rounded cursor-pointer max-sm:text-sm ${selectedUser?._id === user._id && "bg-[#282142]/50 "}`}>
               <img src={user.avatar} alt="" className='w-8.75 aspect[1/1] rounded-full'/>
+              <div style={{paddingRight: "0.5rem"}} className='flex justify-between items-center border-white w-full'>
               <div className='flex flex-col leading-5'>
                 <p>{user.username}</p>
-                {
-                  index < 2 ? <span className='text-green-400 text-xs'>Online</span> : <span className='text-neutral-400 text-xs'>Offline</span>
-                }
-
-                {index > 2 && <p className='absolute top-4 right-4 text-xs h-5 w-5 flex justify-center items-center rounded-full bg-violet-500/50'>{index}</p>}
-
+                {onlineUsers.includes(String(user._id)) ? (
+                    <span className="text-green-400 text-xs">Online</span>
+                ) : (
+                    <span className="text-neutral-400 text-xs">Offline</span>
+                )}
+              </div>
+              <div>
+                {user.unreadCount > 0 && (
+                      <span className="bg-violet-500 text-white text-xs
+                          w-5 h-5 rounded-full flex items-center justify-center">
+                          {user.unreadCount}
+                      </span>
+                  )}
+              </div>
               </div>
             </div>
+            
           })}
 
         </div>

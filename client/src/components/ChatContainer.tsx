@@ -5,7 +5,7 @@ import { MessageContext } from "../context/MessageContext";
 import { AuthContext } from "../context/AuthContext";
 
 
-const ChatContainer = ({setSelectedUser, selectedUser }: any) => {
+const ChatContainer = ({setSelectedUser, selectedUser}: any) => {
 
   const { user } = useContext(AuthContext);
   const { sendMessage, messages } = useContext(MessageContext);
@@ -23,7 +23,7 @@ const ChatContainer = ({setSelectedUser, selectedUser }: any) => {
     if(scrollEnd.current) {
       scrollEnd.current.scrollIntoView({behavior: "smooth"});
     }
-  }, [])
+  }, [selectedUser, messages])
   
 
   return selectedUser ? (
