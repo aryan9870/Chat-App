@@ -1,5 +1,6 @@
 import User from "../models/user.model.js";
 import generateToken from "../utils/generateToken.js";
+import uploadToCloudinary from "../utils/uploadToCloudinary.js";
 
 // Register User
 export const registerUser = async (req, res) => {
@@ -102,3 +103,47 @@ export const getProfile = async (req, res) => {
     user,
   });
 };
+
+// Update Profile
+export const updateProfile = async (req, res) => {
+    // get current logged-in user
+    const user = await User.findById(req.user.id);
+
+    if (!user) {
+        return res.status(404).json({
+            success: false,
+            message: "User not found",
+        });
+    }
+
+    const { username, bio } = req.body;
+
+    console.log("Body:", req.body);
+    console.log("File:", req.file);
+
+    // update username and bio
+    user.username = username;
+    user.bio = bio;
+
+    console.log("before upload");
+    if (req.file) {
+      const result = await uploadToCloudinary(req.file.buffer);
+      user.avatar = result.secure_url;
+    }
+    console.log("after upload");
+
+    await user.save();
+
+    res.status(200).json({
+        success: true,
+        message: "Profile updated successfully",
+        user: {
+            _id: user._id,
+            username: user.username,
+            email: user.email,
+            avatar: user.avatar,
+            bio: user.bio,
+        },
+    });    
+    
+}

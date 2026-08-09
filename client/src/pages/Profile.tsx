@@ -2,20 +2,47 @@ import { useNavigate } from "react-router";
 import assets from "../assets/assets"
 import { useContext, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
+import api from "../api/axios";
+import toast from "react-hot-toast";
 
 const Profile = () => {
 
-  const { user } = useContext(AuthContext);
-
-  const [selectedImg, setSelectedImg] = useState<File | null>(null);
+  const { user, getProfile } = useContext(AuthContext);
   const navigate = useNavigate();
-  const [name, setName] = useState(user.username);
+
+  const [avatar, setAvatar] = useState<File | null>(null);
+  const [username, setUsername] = useState(user.username);
   const [bio, setBio] = useState(user.bio);
 
-  const handleSubmit = (e: any) => {
+  const [loading, setLoading] = useState(false);
+
+
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
-    navigate("/")
-  }
+    setLoading(true);
+    try {
+        const formData = new FormData();
+
+        formData.append("username", username);
+        formData.append("bio", bio);
+
+        if (avatar) {
+            formData.append("avatar", avatar);
+        }
+
+        const { data } = await api.put("/users/profile", formData);
+
+        if(data.success) {
+          getProfile();
+          toast.success(data.message);
+          navigate("/");
+        }
+    } catch (error) {
+        console.log(error);
+    } finally {
+      setLoading(false);
+    }
+};
 
   return (
     <div className='min-h-screen bg-cover bg-no-repeat flex items-center justify-center'>
@@ -28,18 +55,18 @@ const Profile = () => {
             className='flex items-center gap-3 cursor-pointer'
           >
             <input
-              onChange={(e) => setSelectedImg(e.target.files?.[0] || null)}
+              onChange={(e) => setAvatar(e.target.files?.[0] || null)}
               type="file"
               id='avatar'
               accept='.png, .jpg, .jpeg'
               hidden
             />
-            <img src={selectedImg ? URL.createObjectURL(selectedImg) : user.avatar} alt="" className={`w-12 h-12 rounded-full`}/>
+            <img src={avatar ? URL.createObjectURL(avatar) : user.avatar} alt="" className={`w-12 h-12 rounded-full`}/>
             upload profile image
           </label>
           <input
-            onChange={(e) => setName(e.target.value)}
-            value={name}
+            onChange={(e) => setUsername(e.target.value)}
+            value={username}
             type="text"
             required
             placeholder="Your name"
@@ -58,7 +85,7 @@ const Profile = () => {
           ></textarea>
 
           <button style={{padding: "0.5rem"}} type="submit" className="bg-linear-to-r from-purple-400 to-violet-600 text-white rounded-full text-lg cursor-pointer">
-            Save
+            {loading ? "Loading..." : "Save"}
           </button>
         </form>
 
