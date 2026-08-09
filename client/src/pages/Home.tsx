@@ -1,11 +1,12 @@
 import Sidebar from "../components/Sidebar"
 import ChatContainer from "../components/ChatContainer"
 import RightSidebar from "../components/RightSidebar"
-import { useState } from "react"
+import { useContext } from "react";
+import { MessageContext } from "../context/MessageContext";
 
 const Home = () => {
 
-  const [selectedUser, setSelectedUser] = useState(false);
+  const { selectedUser, setSelectedUser } = useContext(MessageContext);
 
   return (
     <div style={{ padding: '5% 15% 5% 15%' }} className="h-screen w-full text-white">

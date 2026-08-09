@@ -9,8 +9,6 @@ const ChatContainer = ({setSelectedUser, selectedUser }: any) => {
 
   const { user } = useContext(AuthContext);
   const { sendMessage, messages } = useContext(MessageContext);
-  console.log(messages);
-
   const [content, setContent] = useState("");
 
   const handleSendMessage = (e: any) => {

@@ -10,7 +10,7 @@ export const MessageProvider = ({ children }: any) => {
   const socket = useSocket();
 
   const [users, setUsers] = useState([]);
-  const [selectedUser, setSelectedUser] = useState(null);
+  const [selectedUser, setSelectedUser] = useState<any>(null);
   const [messages, setMessages] = useState<any[]>([]);
   const [onlineUsers, setOnlineUsers] = useState<string[]>([]);
 
@@ -36,7 +36,6 @@ export const MessageProvider = ({ children }: any) => {
   const sendMessage = async (id: string, content: string) => {
     try {
       const response = await api.post(`/messages/send/${id}`, { content });
-      console.log(response.data);
     } catch (error) {
       console.error("Error sending message:", error);
     }
@@ -57,10 +56,13 @@ export const MessageProvider = ({ children }: any) => {
   }, [socket]);
 
   useEffect(() => {
-    if (!socket) return;
+
+    if (!socket || !selectedUser) return;
 
     const handleNewMessage = (message: any) => {
-        setMessages((prev: any[]) => [...prev, message]);
+      if (String(message.sender) === String(selectedUser._id) || String(message.receiver) === String(selectedUser._id)) {
+      setMessages((prev: any[]) => [...prev, message]);
+      }
     };
 
     socket.on("newMessage", handleNewMessage);
@@ -68,7 +70,7 @@ export const MessageProvider = ({ children }: any) => {
     return () => {
         socket.off("newMessage", handleNewMessage);
     };
-  }, [socket]);
+  }, [socket, selectedUser]);
 
   const value = {
     users,
