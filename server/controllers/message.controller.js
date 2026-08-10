@@ -1,6 +1,7 @@
 import User from "../models/user.model.js";
 import Message from "../models/message.model.js";
 import { io, userSocketMap } from "../server.js";
+import uploadToCloudinary from "../utils/uploadToCloudinary.js";
 
 // Get all users for sidebar
 export const getUsersForSidebar = async (req, res) => {
@@ -86,17 +87,31 @@ export const getMessages = async (req, res) => {
 // Send message
 export const sendMessage = async (req, res) => {
 
-    // 1. Get receiver id from req.params.id
+    // 1. Get receiver id
     const receiverId = req.params.id;
-    // 2. Get sender id from req.user
+
+    // 2. Get sender id
     const senderId = req.user._id;
+
     // 3. Get content from req.body
-    const content = req.body.content;
+    const { content } = req.body;
+
+    // 4. Get image from multer
+    const imageFile = req.file;
+
+    // 5. If image exists, upload it to Cloudinary
+    let imageUrl = "";
+    if (imageFile) {
+        const result = await uploadToCloudinary(imageFile.buffer);
+        imageUrl = result.secure_url;
+    }
+
     // 4. Create new message
     const newMessage = await Message.create({
       sender: senderId,
       receiver: receiverId,
       content: content,
+      image: imageUrl,
     });
 
     const receiverSocketId = userSocketMap[receiverId];

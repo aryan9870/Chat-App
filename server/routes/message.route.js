@@ -1,5 +1,7 @@
 import express from "express";
 import { isLoggedin } from "../middlewares/auth.middleware.js";
+import upload from "../middlewares/upload.middleware.js";
+
 import {
   sendMessage,
   getMessages,
@@ -15,6 +17,6 @@ router.get("/users", isLoggedin, getUsersForSidebar);
 router.get("/:id", isLoggedin, getMessages);
 
 // Send message to selected user
-router.post("/send/:id", isLoggedin, sendMessage);
+router.post("/send/:id", isLoggedin, upload.single("image"), sendMessage);
 
 export default router;

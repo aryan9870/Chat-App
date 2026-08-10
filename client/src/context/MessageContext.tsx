@@ -13,6 +13,7 @@ export const MessageProvider = ({ children }: any) => {
   const [selectedUser, setSelectedUser] = useState<any>(null);
   const [messages, setMessages] = useState<any[]>([]);
   const [onlineUsers, setOnlineUsers] = useState<string[]>([]);
+  const [loading, setLoading] = useState(false);
 
 
   const getUsers = async () => {
@@ -34,11 +35,23 @@ export const MessageProvider = ({ children }: any) => {
     }
   };
 
-  const sendMessage = async (id: string, content: string) => {
+  const sendMessage = async (id: string, content: string, image: File | null) => {
+    setLoading(true);
     try {
-      const response = await api.post(`/messages/send/${id}`, { content });
+      const formData = new FormData();
+
+      formData.append("content", content);
+
+      if (image) {
+          formData.append("image", image);
+      }
+
+      await api.post(`/messages/send/${id}`, formData);
+
     } catch (error) {
       console.error("Error sending message:", error);
+    } finally{
+      setLoading(false);
     }
   };
 
@@ -84,7 +97,8 @@ export const MessageProvider = ({ children }: any) => {
     getUsers,
     getMessages,
     sendMessage,
-    onlineUsers
+    onlineUsers,
+    loading
   };
 
   return (

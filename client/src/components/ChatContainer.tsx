@@ -8,13 +8,19 @@ import { AuthContext } from "../context/AuthContext";
 const ChatContainer = ({setSelectedUser, selectedUser}: any) => {
 
   const { user } = useContext(AuthContext);
-  const { sendMessage, messages } = useContext(MessageContext);
+  const { sendMessage, messages, loading } = useContext(MessageContext);
   const [content, setContent] = useState("");
+  const [image, setImage] = useState<File | null>(null);
 
   const handleSendMessage = (e: any) => {
     e.preventDefault();
-    sendMessage(selectedUser._id, content);
+
+    if (!content.trim() && !image) return;
+
+    sendMessage(selectedUser._id, content, image);
+    
     setContent("");
+    setImage(null);
   }
 
   const scrollEnd = useRef<HTMLDivElement | null>(null);
@@ -41,14 +47,17 @@ const ChatContainer = ({setSelectedUser, selectedUser}: any) => {
       {messages.map((msg: any, index: number) => (
         <div key={index} className={`flex items-end gap-2 justify-end ${
             msg.sender !== user._id && "flex-row-reverse"}`}>
-          {msg.image ? (
+          <div>
+          {msg.image && (
             <img style={{marginBottom: "2rem"}} src={msg.image} alt="" className="max-w-50 border border-gray-700 rounded-lg overflow-hidden"/>
-          ) : (
+          )}
+          {msg.content && (
             <p style={{marginBottom: "2rem", padding: "0.5rem"}} className={` max-w-60 md:text-sm font-light rounded-lg break-all text-white bg-blue-400 ${
                 msg.sender === user._id ? "rounded-br-none" : "rounded-bl-none"}`}>
               {msg.content}
             </p>
           )}
+          </div>
 
           <div className="flex flex-col items-center gap-2">
             <img src={msg.sender === selectedUser._id ? selectedUser.avatar : user.avatar} alt="" className="w-7 rounded-full"/>
@@ -78,7 +87,19 @@ const ChatContainer = ({setSelectedUser, selectedUser}: any) => {
           id="image"
           accept="image/png, image/jpeg"
           hidden
+          onChange={(e) => {
+            const file = e.target.files?.[0];
+
+            if (file) {
+                setImage(file);
+            }
+          }}
         />
+        {image && (
+          <p className="text-xs text-white">
+              {image.name}
+          </p>
+        )}
 
         <label htmlFor="image">
           <img
@@ -88,18 +109,21 @@ const ChatContainer = ({setSelectedUser, selectedUser}: any) => {
           />
         </label>
       </div>
-      <button type="submit" className="cursor-pointer">
-        <img
+      <button style={{padding: loading && "0.5rem"}} type="submit" className={`cursor-pointer text-gray-300 ${loading && "bg-linear-to-r from-purple-400 to-violet-600 text-white rounded-sm"}`}>
+        {loading ? "Sending..." : (
+          <img
           src={assets.send_button}
           alt=""
           className="w-7"
-        />
+          />
+        )}
+        
       </button>
     </form>
 
     </div>
   ) : (
-    <div className="flex flex-col items-center justify-center gap-4 text-center h-full text-gray-300">
+    <div className="flex flex-col items-center justify-center gap-4 text-center h-full">
       <img
         src={assets.logo_icon}
         alt=""
