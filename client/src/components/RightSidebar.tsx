@@ -1,11 +1,18 @@
 import { useContext } from "react";
-import assets, { imagesDummyData } from "../assets/assets";
+import assets from "../assets/assets";
 import { AuthContext } from "../context/AuthContext";
+import { MessageContext } from "../context/MessageContext";
 
 const RightSidebar = ({ selectedUser }: any) => {
 
   const { logout } = useContext(AuthContext);
-  
+  const { messages } = useContext(MessageContext);
+  console.log(messages);
+
+  const mediaMessages = messages.filter(
+  (message: any) => message.image && message.image.trim() !== ""
+  );
+  console.log(mediaMessages);
   return (
     selectedUser && (
       <div
@@ -33,17 +40,17 @@ const RightSidebar = ({ selectedUser }: any) => {
         <hr style={{marginBottom: "1rem"}} className="border-[#fffffff50]"/>
 
         <div style={{padding: "0 1.25rem 0 1.25rem"}} className="px-5 text-xs">
-            <p>Media</p>
+            <p style={{paddingBottom: "0.25rem"}}>Media</p>
 
-            <div className="mt-2 max-h-50 overflow-y-scroll grid grid-cols-2 gap-4 opacity-80">
-              {imagesDummyData.map((url, index) => (
+            <div className="mt-2 max-h-50 overflow-y-scroll grid grid-cols-2 gap-4 opacity-80 ">
+              {mediaMessages.map((message : any, index: any) => (
                 <div
                   key={index}
-                  onClick={() => window.open(url)}
+                  onClick={() => window.open(message.image)}
                   className="cursor-pointer rounded"
                 >
                   <img
-                    src={url}
+                    src={message.image}
                     alt=""
                     className="h-full rounded-md"
                   />

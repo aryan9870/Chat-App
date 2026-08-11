@@ -24,8 +24,8 @@ const Sidebar = ({ selectedUser, setSelectedUser }: any) => {
   }, []);
 
   return (
-    <div className={`bg-[#8185B2]/10 h-full rounded-r-xl overflow-y-scroll text-white ${selectedUser ? "max-md:hidden" : ""}`}>
-        <div style={{padding: "1.25rem"}}>
+    <div className={`bg-[#8185B2]/10 h-full rounded-r-xl overflow-hidden text-white flex flex-col ${selectedUser ? "max-md:hidden" : ""}`}>
+        <div className='' style={{padding: "1.25rem"}}>
             <div className="flex justify-between items-center">
                 <img src={assets.logo} alt="logo" className="max-w-40"/>
                 <div style={{padding: "0.5rem"}} className='relative group'>
@@ -46,7 +46,8 @@ const Sidebar = ({ selectedUser, setSelectedUser }: any) => {
         </div>
 
         {/* Contacts */}
-        <div className='flex flex-col'>
+        <div className='flex-1 overflow-y-auto min-h-0'>
+          <div className='flex flex-col'>
           {users.map((user: any, index: number) => {
             return <div onClick={() => handleSelectUser(user)} key={index} style={{padding: "0.5rem", paddingLeft: "1rem"}}  className={`relative flex items-center gap-2 rounded cursor-pointer max-sm:text-sm ${selectedUser?._id === user._id && "bg-[#282142]/50 "}`}>
               <img src={user.avatar} alt="" className='w-8.75 aspect[1/1] rounded-full'/>
@@ -71,6 +72,7 @@ const Sidebar = ({ selectedUser, setSelectedUser }: any) => {
             </div>
             
           })}
+          </div>
 
         </div>
 
