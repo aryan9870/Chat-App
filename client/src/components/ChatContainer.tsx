@@ -3,7 +3,7 @@ import assets from "../assets/assets"
 import dayjs from "dayjs";
 import { MessageContext } from "../context/MessageContext";
 import { AuthContext } from "../context/AuthContext";
-
+import LoadingButton from "./LoadingButton";
 
 const ChatContainer = ({setSelectedUser, selectedUser}: any) => {
 
@@ -109,16 +109,14 @@ const ChatContainer = ({setSelectedUser, selectedUser}: any) => {
           />
         </label>
       </div>
-      <button style={{padding: loading && "0.5rem"}} type="submit" className={`cursor-pointer text-gray-300 ${loading && "bg-linear-to-r from-purple-400 to-violet-600 text-white rounded-sm"}`}>
-        {loading ? "Sending..." : (
-          <img
+      <LoadingButton loading={loading}>
+        <img
           src={assets.send_button}
           alt=""
           className="w-7"
-          />
-        )}
+        />
+      </LoadingButton>
         
-      </button>
     </form>
 
     </div>

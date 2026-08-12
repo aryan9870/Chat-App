@@ -3,7 +3,7 @@ import { Routes, Route, Navigate } from "react-router";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Profile from "./pages/Profile";
-import Spinner from "./pages/Spinner";
+import Loading from "./components/Loading";
 
 import { Toaster } from "react-hot-toast";
 
@@ -20,7 +20,7 @@ function App() {
     getProfile();
   }, []);
 
-  if (loading) return <Spinner />;
+  if (loading) return <Loading />;
 
   return (
     <div className="bg-[url('./src/assets/bgImage.svg')] bg-contain">

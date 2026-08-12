@@ -1,8 +1,7 @@
 import { useNavigate } from 'react-router'
 import assets from '../assets/assets'
 import { AuthContext } from '../context/AuthContext';
-import { useContext } from 'react';
-import { useEffect } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { MessageContext } from '../context/MessageContext';
 
 
@@ -12,7 +11,12 @@ const Sidebar = ({ selectedUser, setSelectedUser }: any) => {
   const { users, getUsers, getMessages, onlineUsers } = useContext(MessageContext);
   const navigate = useNavigate();
 
-  console.log("ONLINE USERS: ", onlineUsers);
+  const [search, setSearch] = useState("");
+
+  const filteredUsers = users.filter((user: any) =>
+    user.username.toLowerCase().includes(search.toLowerCase())
+  );
+
 
   const handleSelectUser = async (user: any) => {
     await getMessages(user._id);
@@ -41,14 +45,14 @@ const Sidebar = ({ selectedUser, setSelectedUser }: any) => {
             {/* Sidebar */}
             <div style={{padding: "0.5rem 1rem 0.5rem 1rem", marginTop: "1.25rem"}} className='bg-[#282142] rounded-full flex items-center gap-2'>
               <img src={assets.search_icon} alt="Search" className='w-3'/>
-              <input type="text" className='bg-transparent border-none outline-none text-white text-xs placeholder-[#c8c8c8] flex-1' placeholder='Search User...' />
+              <input type="text" value={search} onChange={(e) => setSearch(e.target.value)} className='bg-transparent border-none outline-none text-white text-xs placeholder-[#c8c8c8] flex-1' placeholder='Search User...' />
             </div>
         </div>
 
         {/* Contacts */}
         <div className='flex-1 overflow-y-auto min-h-0'>
           <div className='flex flex-col'>
-          {users.map((user: any, index: number) => {
+          {filteredUsers.map((user: any, index: number) => {
             return <div onClick={() => handleSelectUser(user)} key={index} style={{padding: "0.5rem", paddingLeft: "1rem"}}  className={`relative flex items-center gap-2 rounded cursor-pointer max-sm:text-sm ${selectedUser?._id === user._id && "bg-[#282142]/50 "}`}>
               <img src={user.avatar} alt="" className='w-8.75 aspect[1/1] rounded-full'/>
               <div style={{paddingRight: "0.5rem"}} className='flex justify-between items-center border-white w-full'>
